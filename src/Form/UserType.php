@@ -4,8 +4,10 @@ namespace App\Form;
 
 use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\File;
 
 class UserType extends AbstractType
 {
@@ -13,27 +15,40 @@ class UserType extends AbstractType
     {
         $builder
             ->add('email')
-            ->add('roles')
             ->add('password')
-            ->add('type')
             ->add('user_name')
             ->add('user_surname')
             ->add('phone')
             ->add('telegram')
             ->add('company_name')
-            ->add('logotype')
+            ->add('logotype', FileType::class, [
+                'label' => 'Логотип',
+                'mapped' => false,
+                'required' => false,
+                'constraints' => [
+                    new File([
+                        'maxSize' => '1024k',
+                        'mimeTypes' => [
+                            'image/png',
+                            'image/x-citrix-png',
+                            'image/x-png',
+                            'image/jpeg',
+                            'image/pjpeg',
+                            'image/x-citrix-jpeg',
+                            'image/webp',
+                        ],
+                        'mimeTypesMessage' => 'Можно загрузить только форматы jpp, jpeg, png, webp',
+                        'maxSizeMessage' => 'Максимальный размер файла: 1024 килобайт',
+                    ])
+                ]])
             ->add('slogan')
             ->add('description')
             ->add('site')
             ->add('city')
-            ->add('registration_date', null, [
-                'widget' => 'single_text',
-            ])
             ->add('login_date', null, [
                 'widget' => 'single_text',
             ])
             ->add('hide_contacts')
-            ->add('isVerified')
         ;
     }
 
