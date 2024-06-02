@@ -81,10 +81,11 @@ class UserController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_user_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, User $user, SluggerInterface $slugger, EntityManagerInterface $entityManager, FileUploader $fileUploader, string $logotypeDirectory): Response
+    public function edit(Request $request, User $user, SluggerInterface $slugger, EntityManagerInterface $entityManager, FileUploader $fileUploader, string $logotypeDirectory = '/public/uploads/members/logotype'): Response
     {
         $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
+        $logotypeDirectory = $this->getParameter('logotype_directory');
 
         if ($form->isSubmitted() && $form->isValid()) {
             $logotypeFile = $form->get('logotype')->getData();

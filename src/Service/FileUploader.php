@@ -1,3 +1,5 @@
+<?php
+
 namespace App\Service;
 
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
@@ -10,6 +12,7 @@ class FileUploader
         private string $targetDirectory,
         private SluggerInterface $slugger,
     ) {
+        $this->targetDirectory = $targetDirectory ;
     }
     
     public function upload(UploadedFile $file): string
