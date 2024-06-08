@@ -1,6 +1,40 @@
 version: '3'
 
 services:
+  php:
+    build:
+      context: .
+      target: frankenphp_dev
+      args:
+        # Для того, чтобы в локальном разработческом образе можно было сразу установить корректные значения и их не надо
+        # было исправлять после создания контейнера.
+        - UID=${UID:?Please define UID}
+        - GID=${GID:?Please define GID}
+    volumes:
+      - ./:/app
+      - ./frankenphp/Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./frankenphp/conf.d/app.dev.ini:/usr/local/etc/php/conf.d/app.dev.ini:ro
+      # If you develop on Mac or Windows you can remove the vendor/ directory
+      #  from the bind-mount for better performance by enabling the next line:
+      #- /app/vendor
+    environment:
+      MERCURE_EXTRA_DIRECTIVES: demo
+      # See https://xdebug.org/docs/all_settings#mode
+      XDEBUG_MODE: "${XDEBUG_MODE:-off}"
+      # Нужно для того, чтобы работал по http.
+      SERVER_NAME: ":80"
+    extra_hosts:
+      # Ensure that host.docker.internal is correctly defined on Linux
+      - host.docker.internal:host-gateway
+    tty: true
+
+    labels:
+      caddy: kvasiliev.localhost
+      caddy.reverse_proxy: "{{upstreams 80}}"
+
+    networks:
+      - caddy
+      - default
 ###> doctrine/doctrine-bundle ###
   database:
     ports:
@@ -17,3 +51,7 @@ services:
       MP_SMTP_AUTH_ACCEPT_ANY: 1
       MP_SMTP_AUTH_ALLOW_INSECURE: 1
 ###< symfony/mailer ###
+
+networks:
+  caddy:
+    external: true

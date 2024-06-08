@@ -79,6 +79,9 @@
         "symfony": {
             "allow-contrib": false,
             "require": "6.4.*"
-        }
+        },
+        "runtime": {
+			"dotenv_path": "config/.env"
+		}
     }
 }
