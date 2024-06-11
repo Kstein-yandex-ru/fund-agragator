@@ -90,6 +90,7 @@ class UserController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $logotypeFile = $form->get('logotype')->getData();
             if ($logotypeFile) {
+                $logotype = $fileUploader->upload($logotypeFile);
                 $originalFilename = pathinfo($logotypeFile->getClientOriginalName(), PATHINFO_FILENAME);
                 // this is needed to safely include the file name as part of the URL
                 $safeFilename = $slugger->slug($originalFilename);
@@ -105,7 +106,7 @@ class UserController extends AbstractController
 
                 // updates the 'brochureFilename' property to store the PDF file name
                 // instead of its contents
-                $logotype = $fileUploader->upload($logotypeFile);
+                
                 $user->setLogotype($logotype);
             }
             $user->setLogotype(
