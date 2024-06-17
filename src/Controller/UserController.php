@@ -31,6 +31,8 @@ class UserController extends AbstractController
     #[Route('/funds', name: 'app_user_funds', methods: ['GET'])]
     public function funds(UserRepository $userRepository): Response
     {
+        $logotypeDirectory = $this->getParameter('logotype_directory');
+        
         return $this->render('user/funds.html.twig', [
             'users' => $userRepository->findBy(['type' => 'fund']   ),
         ]);

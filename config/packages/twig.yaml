@@ -1,6 +1,9 @@
 twig:
     file_name_pattern: '*.twig'
+    globals:
+        logotype_directory: '%kernel.project_dir%/public/uploads/members/logotype/'
 
 when@test:
     twig:
         strict_variables: true
+
