@@ -91,14 +91,14 @@ class UserController extends AbstractController
             $logotypeFile = $form->get('logotype')->getData();
             if ($logotypeFile) {
                 $logotype = $fileUploader->upload($logotypeFile);
-                $originalFilename = pathinfo($logotypeFile->getClientOriginalName(), PATHINFO_FILENAME);
-                // this is needed to safely include the file name as part of the URL
-                $safeFilename = $slugger->slug($originalFilename);
-                $newFilename = $safeFilename.'-'.uniqid().'.'.$logotypeFile->guessExtension();
+                // $originalFilename = pathinfo($logotypeFile->getClientOriginalName(), PATHINFO_FILENAME);
+                // // this is needed to safely include the file name as part of the URL
+                // $safeFilename = $slugger->slug($originalFilename);
+                // $newFilename = $safeFilename.'-'.uniqid().'.'.$logotypeFile->guessExtension();
 
                 // Move the file to the directory where brochures are stored
                 try {
-                    $logotypeFile->move($logotypeDirectory, $newFilename);
+                    $logotypeFile->move($logotypeDirectory, $logotype);
                 } catch (FileException $e) {
                     // ... handle exception if something happens during file upload
                 }
@@ -109,9 +109,9 @@ class UserController extends AbstractController
                 
                 $user->setLogotype($logotype);
             }
-            $user->setLogotype(
-                new File($logotypeDirectory.DIRECTORY_SEPARATOR.$user->getLogotype())
-            );
+            // $user->setLogotype(
+            //     new File($logotypeDirectory.DIRECTORY_SEPARATOR.$user->getLogotype())
+            // );
             $entityManager->flush();
 
             return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
