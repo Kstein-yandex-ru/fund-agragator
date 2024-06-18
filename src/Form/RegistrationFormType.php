@@ -2,12 +2,15 @@
 
 namespace App\Form;
 
+use App\Entity\FundCategories;
 use App\Entity\User;
+use Doctrine\ORM\Query\Expr\Func;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\DateType ;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\IsTrue;
@@ -28,6 +31,14 @@ class RegistrationFormType extends AbstractType
                 ],
                 'label' => 'Зарегистрироваться как',
                 ])
+                ->add('categories', EntityType::class, [
+                    'class' => FundCategories::class,
+                    'label' => 'Направление фонда',
+                     'multiple' => true,
+                     'choice_label' => 'name',
+                     'choice_value' => 'id'
+
+                    ])
             ->add('registration_date', DateType::class, [
                 'data' => \DateTime::createFromFormat('Y-m-d', date('Y-m-d')),
                 'attr' => array('style'=>'display:none'),

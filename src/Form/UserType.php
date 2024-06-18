@@ -3,8 +3,10 @@
 namespace App\Form;
 
 use App\Entity\User;
+use App\Entity\FundCategories;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\File;
@@ -21,6 +23,14 @@ class UserType extends AbstractType
             ->add('phone')
             ->add('telegram')
             ->add('company_name')
+            ->add('categories', EntityType::class, [
+                'class' => FundCategories::class,
+                'label' => 'Направление фонда',
+                 'multiple' => true,
+                 'choice_label' => 'name',
+                 'choice_value' => 'id'
+
+                ])
             ->add('logotype', FileType::class, [
                 'label' => 'Логотип',
                 'mapped' => false,
