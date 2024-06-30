@@ -88,9 +88,25 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToMany(targetEntity: FundCategories::class, inversedBy: 'users')]
     private Collection $categories;
 
+    /**
+     * @var Collection<int, Project>
+     */
+    #[ORM\OneToMany(targetEntity: Project::class, mappedBy: 'user')]
+    private Collection $Projects;
+
+    #[ORM\ManyToOne(inversedBy: 'User')]
+    private ?Comments $comments = null;
+
+    #[ORM\OneToOne(mappedBy: 'User', cascade: ['persist', 'remove'])]
+    private ?Reviews $reviewsFrom = null;
+
+    #[ORM\OneToOne(mappedBy: 'UserTo', cascade: ['persist', 'remove'])]
+    private ?Reviews $reviews = null;
+
     public function __construct()
     {
         $this->categories = new ArrayCollection();
+        $this->Projects = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -368,6 +384,82 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeCategory(FundCategories $category): static
     {
         $this->categories->removeElement($category);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Project>
+     */
+    public function getProjects(): Collection
+    {
+        return $this->Projects;
+    }
+
+    public function addProject(Project $project): static
+    {
+        if (!$this->Projects->contains($project)) {
+            $this->Projects->add($project);
+            $project->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProject(Project $project): static
+    {
+        if ($this->Projects->removeElement($project)) {
+            // set the owning side to null (unless already changed)
+            if ($project->getUser() === $this) {
+                $project->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getComments(): ?Comments
+    {
+        return $this->comments;
+    }
+
+    public function setComments(?Comments $comments): static
+    {
+        $this->comments = $comments;
+
+        return $this;
+    }
+
+    public function getReviewsFrom(): ?Reviews
+    {
+        return $this->reviewsFrom;
+    }
+
+    public function setReviewsFrom(Reviews $reviewsFrom): static
+    {
+        // set the owning side of the relation if necessary
+        if ($reviewsFrom->getUser() !== $this) {
+            $reviewsFrom->setUser($this);
+        }
+
+        $this->reviewsFrom = $reviewsFrom;
+
+        return $this;
+    }
+
+    public function getReviews(): ?Reviews
+    {
+        return $this->reviews;
+    }
+
+    public function setReviews(Reviews $reviews): static
+    {
+        // set the owning side of the relation if necessary
+        if ($reviews->getUserTo() !== $this) {
+            $reviews->setUserTo($this);
+        }
+
+        $this->reviews = $reviews;
 
         return $this;
     }
